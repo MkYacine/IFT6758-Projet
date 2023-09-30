@@ -76,6 +76,8 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
 
     # Store games in local cache
     df = pd.DataFrame(rows)
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
     df.to_csv(f"{data_dir}/{year}.csv", index=False)
 
     return df
