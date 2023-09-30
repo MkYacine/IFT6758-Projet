@@ -2,13 +2,16 @@
 
 This repository will be a shared work space for our project on NLH data analysis.
 
-## Environment
-For uniformity, I suggest using pip and requirements.txt to keep the tools used up to date.  
-With pip installed on your system, you will only have to clone the repository, and then run `pip install -r requirements.txt` in your IDE to install all required packages.  
-The requirements.txt file should be maintained manually; every time you use a new Python library, it should be added to requirements.txt.  
+## Environment setup
+For uniformity, I suggest using virtualenv with pip and requirements.txt to keep the tools used up to date.  
+With pip and virtualenv installed on your system, follow these steps:
+1. Clone the repository with `git clone https://github.com/MkYacine/IFT6758-Projet.git`
+2. In your project repo, create the virtual environment with `vitualenv ~/ift6758-venv`
+3. Run `pip install -r requirements.txt` to install all required packages.  
+The requirements.txt file should be maintained manually; before committing your changes, run `pip freeze > requirements.txt` to update.  
 
 ## General workflow
-If you're unexperienced with Git, here is a general workflow that I have used for previous team projects:
+If you're inexperienced with Git, here is a general workflow that I have used for previous team projects:
 
 ### 1. Create a New Branch:
 Within your IDE, create a new branch from the main branch.  
