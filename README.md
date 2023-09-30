@@ -6,8 +6,9 @@ This repository will be a shared work space for our project on NLH data analysis
 For uniformity, I suggest using virtualenv with pip and requirements.txt to keep the tools used up to date.  
 With pip and virtualenv installed on your system, follow these steps:
 1. Clone the repository with `git clone https://github.com/MkYacine/IFT6758-Projet.git`
-2. In your project repo, create the virtual environment with `vitualenv ~/ift6758-venv`
-3. Run `pip install -r requirements.txt` to install all required packages.  
+2. In your project repo, create the virtual environment with `vitualenv venv`
+3. Activate your virtual environment with `venv\Scripts\activate`
+4. Run `pip install -r requirements.txt` to install all required packages.  
 The requirements.txt file should be maintained manually; before committing your changes, run `pip freeze > requirements.txt` to update.  
 
 ## General workflow
