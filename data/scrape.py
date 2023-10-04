@@ -82,6 +82,37 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     df.to_json(f"{data_dir}/{year}.json")
     return df
 
+def scrape_multiple_years(years : list, output_file: str = './data/datasets'): 
+    """
+    This function takes a list of years (can be an int or an str) as an argument 
+    and returns a DataFrame containing the data for all those years
+    """
+    # Dans le cas où on veut récupérer les données d'une seule année
+    if len(years) == 1 :
+        return scrape_games_by_year(years[0])
+    
+    # On vérifie si les données pour cette range d'années sont déjà présentes
+    if os.path.exists(f"{output_file}/{years[0]}_to_{years[-1]}.json"):
+        return pd.read_json(f"{output_file}/{years[0]}_to_{years[-1]}.json")
+    else:
+        print(f"Data doesn't exist in cache, scraping data for the years {years[0]} to {years[-1]}")
+
+    # DataFrame de sortie contenant les données pour les années contenues dans "years"
+    df = pd.DataFrame() 
+    # DataFrame auxiliaire
+    df_1 = pd.DataFrame()
+
+    for year in years :
+        df_1 = scrape_games_by_year(str(year))
+        df = pd.concat([df,df_1], ignore_index = True)
+
+    # Libération de la mémoire
+    del df_1        
+
+    # Ecriture du fichier .csv pour toutes les années voulues
+    df.read_json(f"{output_file}/{years[0]}_to_{years[-1]}.json", index = False)
+
+    return df
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Web scraping script.')
