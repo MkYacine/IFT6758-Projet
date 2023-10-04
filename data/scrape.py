@@ -48,13 +48,14 @@ def generate_ids(year: str):
 def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     """
     For a given year, checks if data exists in cache and returns it. If not, scrape data from the
-    web, store it in .csv file in data_dir
+    web, store it in .json file in data_dir
     :param year: Year to scrape data for
     :param data_dir: Directory where datasets are to be stored as .csv files
     :return: Pandas dataframe containing all games raw data
     """
-    if os.path.exists(f"{data_dir}/{year}"):
-        return pd.read_csv(f"{data_dir}/{year}")
+    if os.path.exists(f"{data_dir}/{year}.json"):
+        df = pd.read_json(f"{data_dir}/{year}.json")
+        return df
     else:
         print(f"Data doesn't exist in cache, scraping data for the year {year}")
 
@@ -78,8 +79,7 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     df = pd.DataFrame(rows)
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
-    df.to_csv(f"{data_dir}/{year}.csv", index=False)
-
+    df.to_json(f"{data_dir}/{year}.json")
     return df
 
 
