@@ -162,4 +162,4 @@ cython_debug/
 data/.ipynb_checkpoints
 
 # Ignore scraped dataset, don't push data to git
-data/data/datasets/*
+data/datasets/*
