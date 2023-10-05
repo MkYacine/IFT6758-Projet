@@ -32,7 +32,7 @@ def clean_row(row):
     plays = []
 
     all_plays_list = row['liveData']['plays']['allPlays']
-    shots_and_goals = [play for play in all_plays_list if (play['result']['event'] == 'Shot' or play['result']['event'] == 'Goal')]
+    shots_and_goals = [play for play in all_plays_list if (play['result']['event'] in ['Shot', 'Goal'])]
 
     for play in shots_and_goals:
         play_data = {
