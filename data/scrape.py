@@ -110,7 +110,7 @@ def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
     del df_1        
 
     # Ecriture du fichier .csv pour toutes les années voulues
-    df.read_json(f"{output_file}/{years[0]}_to_{years[-1]}.json", index = False)
+    df.to_json(f"{output_file}/{years[0]}_to_{years[-1]}.json", index = False)
 
     return df
 
