@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 
 
 def num_games_by_year(year: str):
@@ -45,6 +46,20 @@ def generate_ids(year: str):
                 yield f'{year}030{round_num}{matchup_num}{game_num}'
 
 
+def fetch_game_data(game_id):
+    """
+    Fetch game data for a specific game_id.
+    :param game_id: The game id to fetch data for
+    :return: JSON data of the game or None if request fails
+    """
+    response = requests.get(f"https://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live/")
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f'Failed to get data for game {game_id}')
+        return None
+
+
 def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     """
     For a given year, checks if data exists in cache and returns it. If not, scrape data from the
@@ -65,15 +80,13 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     total_games = num_games_by_year(year) + 15 * 7  # Games in reg season + games in playoff
     rows = []
 
-    # Scrape games, use tqdm for progression bar
-    for game_id in tqdm(generator, total=total_games, desc="Scraping",
-                        unit="game"):
-        response = requests.get(f"https://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live/")
-        if response.status_code == 200:
-            json_data = response.json()
-            rows.append(json_data)
-        else:
-            print(f'Failed to get data for game {game_id}')
+    # Scrape data using multi-threading
+    # Reference: https://superfastpython.com/threadpoolexecutor-map/
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        results = list(tqdm(executor.map(fetch_game_data, generator), total=total_games, desc="Scraping", unit="game"))
+
+    # Filter out None results
+    rows.extend([result for result in results if result is not None])
 
     # Store games in local cache
     df = pd.DataFrame(rows)
@@ -82,7 +95,8 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     df.to_json(f"{data_dir}/{year}.json")
     return df
 
-def scrape_multiple_years(years : list, output_file: str = './data/datasets'): 
+
+def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
     """
     This function takes a list of years (can be an int or an str) as an argument 
     and returns a DataFrame containing the data for all those years
@@ -90,7 +104,7 @@ def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
     # Dans le cas où on veut récupérer les données d'une seule année
     if len(years) == 1 :
         return scrape_games_by_year(years[0])
-    
+
     # On vérifie si les données pour cette range d'années sont déjà présentes
     if os.path.exists(f"{output_file}/{years[0]}_to_{years[-1]}.json"):
         return pd.read_json(f"{output_file}/{years[0]}_to_{years[-1]}.json")
@@ -98,7 +112,7 @@ def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
         print(f"Data doesn't exist in cache, scraping data for the years {years[0]} to {years[-1]}")
 
     # DataFrame de sortie contenant les données pour les années contenues dans "years"
-    df = pd.DataFrame() 
+    df = pd.DataFrame()
     # DataFrame auxiliaire
     df_1 = pd.DataFrame()
 
@@ -107,7 +121,7 @@ def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
         df = pd.concat([df,df_1], ignore_index = True)
 
     # Libération de la mémoire
-    del df_1        
+    del df_1
 
     # Ecriture du fichier .csv pour toutes les années voulues
     df.read_json(f"{output_file}/{years[0]}_to_{years[-1]}.json", index = False)
