@@ -22,7 +22,7 @@ Name the branch in a descriptive manner, such as feature/feature-name, bugfix/bu
 ### 2. Implement Your Feature:
 Checkout to your newly created branch.  
 Start implementing your feature, regularly committing changes with meaningful commit messages.  
-`git add .`  
+`git add <file1> <file2> <file3>`  
 `git commit -m "Implemented a new feature: feature-name"`
 
 ### 3. Fetch and Merge Main:
@@ -39,20 +39,17 @@ Once you've resolved any conflicts and are satisfied with your changes, push you
 ### 5. Create a Pull Request:
 Go to the GitHub repository online and navigate to the “Pull requests” tab.  
 Click on “New pull request”.  
-Set the base branch to main and the compare branch to your feature branch.  
-Fill out the pull request template with all relevant information, describing your feature, the problem it solves, and any additional context or screenshots.  
+Set the base branch to main and the compare branch to your feature branch.
 
 ### 6. Request Reviews:
-Request reviews from at least two other team members (or as per your team’s collaboration policy).  
-Respond to any comments or requested changes promptly and make necessary modifications.  
+Request reviews from at least two other team members. 
+Respond to any comments or requested changes.
 
 ### 7. Get Approval and Merge:
-Address any feedback from your team members and make requested changes.  
-Once your PR receives approvals from the required number of team members, and all discussions are resolved, it is ready to be merged.  
 Click on “Merge pull request” to merge your changes into the main branch.  
 
 ### 8. Clean Up:
-Once your feature branch is merged, it’s good practice to delete the remote feature branch from GitHub.  
-Additionally, switch to the main branch in your local environment, pull the latest changes, and delete the local feature branch.  
+Delete the remote feature branch from GitHub.  
+Switch to the main branch in your local environment, pull the latest changes, and delete the local feature branch.  
 `git branch -d feature/feature-name`  
 `git push origin --delete feature/feature-name`
