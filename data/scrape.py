@@ -103,7 +103,7 @@ def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
     """
     # Dans le cas où on veut récupérer les données d'une seule année
     if len(years) == 1 :
-        return scrape_games_by_year(years[0])
+        return scrape_games_by_year(years[0], output_file)
 
     # On vérifie si les données pour cette range d'années sont déjà présentes
     if os.path.exists(f"{output_file}/{years[0]}_to_{years[-1]}.json"):
@@ -117,7 +117,7 @@ def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
     df_1 = pd.DataFrame()
 
     for year in years :
-        df_1 = scrape_games_by_year(str(year))
+        df_1 = scrape_games_by_year(str(year), output_file)
         df = pd.concat([df,df_1], ignore_index = True)
 
     # Libération de la mémoire
