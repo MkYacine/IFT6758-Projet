@@ -120,7 +120,7 @@ def scrape_multiple_years(years : list, output_file: str = '.\data\datasets\json
     df_1 = pd.DataFrame()
 
     for year in years :
-        df_1 = scrape_games_by_year(str(year))
+        df_1 = scrape_games_by_year(str(year), output_file)
         df = pd.concat([df,df_1], ignore_index = True)
 
     # Libération de la mémoire
