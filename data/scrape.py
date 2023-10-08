@@ -60,7 +60,7 @@ def fetch_game_data(game_id):
         return None
 
 
-def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
+def scrape_games_by_year(year: str, data_dir: str = './data/datasets/json_files'):
     """
     For a given year, checks if data exists in cache and returns it. If not, scrape data from the
     web, store it in .json file in data_dir
@@ -92,18 +92,21 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     df = pd.DataFrame(rows)
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
-    df.to_json(f"{data_dir}/{year}.json")
+    #df.to_json(f"{data_dir}/{year}.json")
     return df
 
 
-def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
+def scrape_multiple_years(years : list, output_file: str = '.\data\datasets\json_files'):
     """
     This function takes a list of years (can be an int or an str) as an argument 
     and returns a DataFrame containing the data for all those years
     """
     # Dans le cas où on veut récupérer les données d'une seule année
     if len(years) == 1 :
-        return scrape_games_by_year(years[0], output_file)
+        df = scrape_games_by_year(years[0])
+        output_path = os.path.join(output_file,f"{years[0]}.json")
+        df.to_json(output_path, index = False)
+        return df
 
     # On vérifie si les données pour cette range d'années sont déjà présentes
     if os.path.exists(f"{output_file}/{years[0]}_to_{years[-1]}.json"):
