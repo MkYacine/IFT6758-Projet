@@ -160,6 +160,7 @@ cython_debug/
 .idea/*
 .idea/
 data/.ipynb_checkpoints
+data/__pycache__
 
 # Ignore scraped dataset, don't push data to git
 data/datasets/*
