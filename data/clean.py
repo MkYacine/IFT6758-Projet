@@ -59,7 +59,7 @@ def clean_row(row):
     return plays
 
 
-def clean_json(input_dir, output_dir):
+def clean_json(input_dir, output_dir=''):
     """
     Get clean data from raw NHL stats API
     :param input_dir: json file to clean data from, raw data
@@ -68,7 +68,7 @@ def clean_json(input_dir, output_dir):
     """
     if os.path.exists(output_dir):
         return pd.read_csv(output_dir)
-    if output_dir is None:
+    if output_dir == '':
         output_dir = input_dir.replace('json', 'csv')
 
     df = pd.read_json(input_dir)
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Reference: https://stackoverflow.com/questions/4480075/argparse-optional-positional-arguments
     parser.add_argument('infile', type=str)
-    parser.add_argument('outfile', type=str, nargs='?', default= None)
+    parser.add_argument('outfile', type=str, nargs='?', default='')
     args = parser.parse_args()
 
     clean_json(args.infile, args.outfile)
