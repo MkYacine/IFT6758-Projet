@@ -33,7 +33,8 @@ def clean_row(row):
 
     all_plays_list = row['liveData']['plays']['allPlays']
     shots_and_goals = [play for play in all_plays_list if (play['result']['event'] in ['Shot', 'Goal'])]
-    boxscore = row['boxscore']
+    #boxscore = row['boxscore']
+    boxscore = row['gameData']
     for play in shots_and_goals:
         play_data = {
             'period': safe_get(play, ['about', 'period']),
@@ -53,7 +54,8 @@ def clean_row(row):
             'y_coordinate': safe_get(play, ['coordinates', 'y']),
             'empty_net': safe_get(play, ['result', 'emptyNet']),
             'strength': safe_get(play, ['result', 'strength', 'name']),
-            'home_team': safe_get(boxscore, ['teams', 'home', 'team', 'name'])
+            #'home_team': safe_get(boxscore, ['teams', 'home', 'team', 'name'])
+            'home_team': safe_get(boxscore, ['teams', 'home', 'name'])
         }
         plays.append(play_data)
     return plays
