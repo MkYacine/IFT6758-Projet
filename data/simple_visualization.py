@@ -76,7 +76,7 @@ def hist_shot_repartition_by_team(team_name : str, df : pd.DataFrame, year : int
     plt.figure(figsize = (20,10))
     plt.grid()
     plt.bar(shot_count.index, shot_count.values, alpha = 0.9, label ='Shot Count')
-    plt.bar(goal_count.index, goal_count.values, alpha = 0.5, label = 'Goal count')
+    plt.bar(goal_count.index, goal_count.values, color = 'green', label = 'Goal count')
 
     plt.ylim(0,2000)
     plt.xlabel('Shot Type')
@@ -139,17 +139,19 @@ def get_efficiency_rate_by_distance(df : pd.DataFrame, bins : list, bin_centers 
     efficiency_table = pd.DataFrame(goal_count['count'].values/(shot_count['count'].values + goal_count['count'].values))
     efficiency_table.fillna(0, inplace = True)
 
-    return efficiency_table
+    return efficiency_table*100
 
-def plot_efficiency_NHL(df: pd.DataFrame, bins : list, bin_centers : list):
+def plot_efficiency_NHL(df: pd.DataFrame, bins : list, bin_centers : list, year : int):
     """This function plots the efficiency rate by distance in the whole league"""
     efficacy_rate = get_efficiency_rate_by_distance(df, bins, bin_centers)
 
+    plt.grid()
     plt.ylim(0,100)
-    plt.plot(bin_centers,100*efficacy_rate)
-    plt.xlabel('Distance from net')
-    plt.ylabel('Efficacy rate')
-    plt.title('Efficacy rate in function of the distance from the net')
+    plt.plot(bin_centers,efficacy_rate)
+    plt.xlabel('Distance from the net (in ft)')
+    plt.ylabel('Efficiency rate')
+    plt.title(f"Efficiency rate in function of the distance from the net in {year}/{year+1}")
+    plt.legend(['Efficiency curve'])
 
     plt.show()
 
@@ -177,14 +179,30 @@ def efficiency_rate_by_shot_type(shot_type : str, df : pd.DataFrame, bins : list
 
     return efficiency
 
-def plot_efficiency_rate_by_shot_type(shot_type : str, df : pd.DataFrame, bins: list, bin_centers : list):
+def plot_efficiency_rate_by_shot_type(shot_type : str, df : pd.DataFrame, bins: list, bin_centers : list, year :int):
     """This function plots the efficiency_rate for a certain shot type in the whole league"""
     efficiency_table = efficiency_rate_by_shot_type(shot_type, df, bins, bin_centers)
 
+    plt.grid()
     plt.ylim(0,105)
     plt.plot(bin_centers,100*efficiency_table)
-    plt.xlabel('Distance from net')
-    plt.ylabel('Efficacy rate')
-    plt.title(f"Efficacy rate in function of the distance from the net for {shot_type}")
+    plt.xlabel('Distance from net(in ft)')
+    plt.ylabel('Efficiency rate')
+    plt.title(f"Efficiency rate in function of the distance from the net for {shot_type} in {year}/{year+1}")
+    plt.legend(['Efficiency curve'])
 
     plt.show()
+
+def plot_efficiency_rate_for_all_shots(df : pd.DataFrame, bins : list, bin_centers : list, year : int):
+    shot_type_list = df['shot_type'].unique()[:-1]
+
+    fig,ax = plt.subplots()
+    plt.grid()
+    for shot_type in shot_type_list : 
+        efficiency = efficiency_rate_by_shot_type(shot_type, df, bins, bin_centers)
+        ax.plot(bin_centers, efficiency, label = shot_type)
+
+    plt.xlabel("Distance from the net(in ft)")
+    plt.ylabel("Efficiency")
+    plt.title(f"Efficiency in function of distance from the net for the different shot types in {year}/{year+1}")
+    plt.legend(shot_type_list)
