@@ -31,7 +31,7 @@ def plot_shot_repartition_NHL(df:pd.DataFrame, year: int):
 
     ax.bar(shot_count.index, shot_count.values, label ='Shot Count')
     ax.bar(goal_count.index, goal_count.values, color = 'green', label = 'Goal Count')
-
+    
     ax.set_xlabel('Shot Type')
     ax.set_ylabel('Size')
     ax.set_title(f"Shot repartition in the NHL in {year}")
@@ -74,9 +74,11 @@ def hist_shot_repartition_by_team(team_name : str, df : pd.DataFrame, year : int
     goal_count = team_goal_count['shot_type'].value_counts()
 
     plt.figure(figsize = (20,10))
+    plt.grid()
     plt.bar(shot_count.index, shot_count.values, alpha = 0.9, label ='Shot Count')
     plt.bar(goal_count.index, goal_count.values, alpha = 0.5, label = 'Goal count')
 
+    plt.ylim(0,2000)
     plt.xlabel('Shot Type')
     plt.ylabel('Size')
     plt.title(f"Shot repartition for {team_name} in {year}")
@@ -93,11 +95,10 @@ def find_net(coordinate_x : int):
     else :
         return 'right'
     
-def compute_distance_to_net(coordinate_x : float, coordinate_y : float):#, attacking_team : str, home_team : str, period : int):
+def compute_distance_to_net(coordinate_x : float, coordinate_y : float):
     """This function determines the net where the attacking team shoots during the play
       and then computes the distance to the net"""
     net_side = find_net(coordinate_x)
-    #net_side = find_net(period, home_team, attacking_team)
     # Cas où le filet sur lequel l'équipe tire se trouve sur la droite
     if net_side == 'right' :
         dist = np.sqrt((coordinate_x - 89)**2 + coordinate_y**2)
@@ -135,7 +136,7 @@ def get_efficiency_rate_by_distance(df : pd.DataFrame, bins : list, bin_centers 
     shot_count = counts[counts['play_type'] == 'Shot']
     goal_count = counts[counts['play_type'] == 'Goal']
 
-    efficiency_table = goal_count['count'].values/shot_count['count']
+    efficiency_table = pd.DataFrame(goal_count['count'].values/(shot_count['count'].values + goal_count['count'].values))
     efficiency_table.fillna(0, inplace = True)
 
     return efficiency_table
@@ -169,17 +170,18 @@ def efficiency_rate_by_shot_type(shot_type : str, df : pd.DataFrame, bins : list
     goal_count = counts[counts['play_type'] == 'Goal']
     shot_count = counts[counts['play_type'] == 'Shot']
     
-    efficiency_table = goal_count['count'].values/shot_count['count']
-    efficiency_table.fillna(0, inplace = True)
-    efficiency_table.replace([float('inf'), float('-inf')], 0, inplace=True)
+    total_attempts = goal_count['count'].values + shot_count['count'].values
 
-    return efficiency_table
+    efficiency = goal_count['count']/total_attempts
+    efficiency.fillna(0,inplace = True)
+
+    return efficiency
 
 def plot_efficiency_rate_by_shot_type(shot_type : str, df : pd.DataFrame, bins: list, bin_centers : list):
     """This function plots the efficiency_rate for a certain shot type in the whole league"""
     efficiency_table = efficiency_rate_by_shot_type(shot_type, df, bins, bin_centers)
 
-    plt.ylim(0,100)
+    plt.ylim(0,105)
     plt.plot(bin_centers,100*efficiency_table)
     plt.xlabel('Distance from net')
     plt.ylabel('Efficacy rate')
