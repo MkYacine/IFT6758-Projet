@@ -60,7 +60,7 @@ def fetch_game_data(game_id):
         return None
 
 
-def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
+def scrape_games_by_year(year: str, data_dir: str = './data/datasets/csv_files'):
     """
     For a given year, checks if data exists in cache and returns it. If not, scrape data from the
     web, store it in .json file in data_dir
@@ -97,7 +97,7 @@ def scrape_games_by_year(year: str, data_dir: str = './data/datasets'):
     return df
 
 
-def scrape_multiple_years(years : list, output_file: str = './data/datasets'):
+def scrape_multiple_years(years : list, output_file: str = './data/datasets/csv_files'):
     """
     This function takes a list of years (can be an int or an str) as an argument 
     and returns a DataFrame containing the data for all those years
