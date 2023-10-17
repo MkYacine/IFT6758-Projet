@@ -2,9 +2,29 @@
 
 This repository will be a shared work space for our project on NLH data analysis.
 
+## Using the project
+Be sure to `run pip install -e .` in the project's root directory immediately after cloning.
+
+### 1. Downloading the data
+To download the NHL raw data for a specific season: In the project's root directory, run `.\src\data/scrape.py *year* *optional: output path*`  
+e.g. `./src/data/scrape.py 2017` download data for the 2017/2018 season.
+This will create a `*year*.json` file in the `/data/datasets/json_files` containing the raw data.
+You can also specify the output path as a second arguement
+
+### 2. Cleaning the data
+To clean the data and obtain the features required for visualizations, run `/src/features/clean.py *path_to_json* *optional: output path`  
+e.g. `/src/data/scrape.py /data/datasets/csv_files/2017.csv`  
+If the output_path is left emtpy, the data will be written to `/data/datasets/csv_files/*year*.json`  
+
+### 3. Visualizing the data
+For data visualizations, use the notebooks found in `/notebooks`  
+`Interactif_debug_tool.ipynb`: Debugging tool to view every offensive play in every season.  
+`simple_visualization.ipynb`: Simple visualizations: shot efficiency by type, shot efficiency by distance, etc...  
+`advanced_visualization.ipynb`: Advanced visualization: shot map for every team by season.  
+
 ## Environment setup
 For uniformity, I suggest using virtualenv with pip and requirements.txt to keep the tools used up to date.  
-With pip and virtualenv installed on your system, follow these steps:
+With pip and virtualenv installed on your system, follow these steps:  
 1. Clone the repository with `git clone https://github.com/MkYacine/IFT6758-Projet.git`
 2. In your project repo, create the virtual environment with `vitualenv venv`
 3. Activate your virtual environment with `venv\Scripts\activate`
