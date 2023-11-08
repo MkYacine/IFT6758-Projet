@@ -4,6 +4,9 @@ from tqdm import tqdm
 import numpy as np
 import pandas as pd
 
+def get_game_seconds(period : int, period_time : object):
+    minutes, seconds = map(int, period_time.split(':'))
+    return (period-1)*900 + minutes*60 + seconds
 
 def safe_get(dct, keys, default=np.NaN):
     """
@@ -30,34 +33,55 @@ def clean_row(row):
     :return: dictionary containing data about all plays in one game
     """
     plays = []
-
+    last_event_type = np.nan
+    last_x = np.nan
+    last_y = np.nan
+    last_period = np.nan
+    last_period_time = "00:00"
     all_plays_list = row['liveData']['plays']['allPlays']
+    
     shots_and_goals = [play for play in all_plays_list if (play['result']['event'] in ['Shot', 'Goal'])]
-    #boxscore = row['boxscore']
-    boxscore = row['gameData']
-    for play in shots_and_goals:
-        play_data = {
-            'period': safe_get(play, ['about', 'period']),
-            'period_type': safe_get(play, ['about', 'periodType']),
-            'period_time': safe_get(play, ['about', 'periodTime']),
-            'gameID': safe_get(row, ['gamePk']),
-            'attacking_team_id': safe_get(play, ['team', 'id']),
-            'attacking_team_name': safe_get(play, ['team', 'name']),
-            'play_type': safe_get(play, ['result', 'event']),
-            # Reference https://www.w3schools.com/python/ref_func_next.asp
-            'shooter': next((player['player']['fullName'] for player in play.get('players', [])
-                             if player['playerType'] in ['Scorer', 'Shooter']), np.NaN),
-            'goalie': next((player['player']['fullName'] for player in play.get('players', [])
-                            if player['playerType'] == 'Goalie'), np.NaN),
-            'shot_type': safe_get(play, ['result', 'secondaryType']),
-            'x_coordinate': safe_get(play, ['coordinates', 'x']),
-            'y_coordinate': safe_get(play, ['coordinates', 'y']),
-            'empty_net': safe_get(play, ['result', 'emptyNet']),
-            'strength': safe_get(play, ['result', 'strength', 'name']),
-            #'home_team': safe_get(boxscore, ['teams', 'home', 'team', 'name'])
-            'home_team': safe_get(boxscore, ['teams', 'home', 'name'])
-        }
-        plays.append(play_data)
+    for play in all_plays_list:
+        if (play['result']['event'] in ['Shot', 'Goal']):
+            x_coord = safe_get(play, ['coordinates', 'x'])
+            y_coord = safe_get(play, ['coordinates', 'y'])
+            period = safe_get(play, ['about', 'period'])
+            period_time = safe_get(play, ['about', 'periodTime'])
+            distance = ((x_coord-last_x)**2 + (y_coord-last_y)**2)**(1/2)
+            time_elapsed = get_game_seconds(period, period_time) - get_game_seconds(last_period, last_period_time)
+            play_data = {
+                'period': period,
+                'period_type': safe_get(play, ['about', 'periodType']),
+                'period_time': period_time,
+                'gameID': safe_get(row, ['gamePk']),
+                'attacking_team_id': safe_get(play, ['team', 'id']),
+                'attacking_team_name': safe_get(play, ['team', 'name']),
+                'play_type': safe_get(play, ['result', 'event']),
+                # Reference https://www.w3schools.com/python/ref_func_next.asp
+                'shooter': next((player['player']['fullName'] for player in play.get('players', [])
+                                 if player['playerType'] in ['Scorer', 'Shooter']), np.NaN),
+                'goalie': next((player['player']['fullName'] for player in play.get('players', [])
+                                if player['playerType'] == 'Goalie'), np.NaN),
+                'shot_type': safe_get(play, ['result', 'secondaryType']),
+                'x_coordinate': x_coord,
+                'y_coordinate': y_coord,
+                'empty_net': safe_get(play, ['result', 'emptyNet']),
+                'strength': safe_get(play, ['result', 'strength', 'name']),
+                'last_event_type': last_event_type,
+                'last_event_x': last_x,
+                'last_event_y': last_y,
+                'time_since_last_event': time_elapsed,
+                'distance_from_last_event': distance,
+            }
+            plays.append(play_data)
+    
+        # Update last event details
+        last_event_type = safe_get(play, ['result', 'event'])
+        last_x = safe_get(play, ['coordinates', 'x'])
+        last_y = safe_get(play, ['coordinates', 'y'])
+        last_period = safe_get(play, ['about', 'period'])
+        last_period_time = safe_get(play, ['about', 'periodTime'])
+
     return plays
 
 
