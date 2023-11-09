@@ -8,6 +8,7 @@ def get_game_seconds(period : int, period_time : object):
     minutes, seconds = map(int, period_time.split(':'))
     return (period-1)*1200 + minutes*60 + seconds
 
+
 def safe_get(dct, keys, default=np.NaN):
     """
     Safely get nested keys from a dictionary, return default if any key is not found.
@@ -16,7 +17,7 @@ def safe_get(dct, keys, default=np.NaN):
     :param default: return if any key is not found
     :return:
     """
-    #Reference https://stackoverflow.com/questions/25833613/safe-method-to-get-value-of-nested-dictionary
+    # Reference https://stackoverflow.com/questions/25833613/safe-method-to-get-value-of-nested-dictionary
     for key in keys:
         try:
             dct = dct[key]
@@ -117,18 +118,18 @@ def clean_row(row):
                 'away_team_players': away_players
             }
             plays.append(play_data)
-    
+
         # Update last event details
-        last_event_type = safe_get(play, ['result', 'event'])
-        last_x = safe_get(play, ['coordinates', 'x'])
-        last_y = safe_get(play, ['coordinates', 'y'])
-        last_period = safe_get(play, ['about', 'period'])
-        last_period_time = safe_get(play, ['about', 'periodTime'])
+        last_event_type = safe_get(play, ["result", "event"])
+        last_x = safe_get(play, ["coordinates", "x"])
+        last_y = safe_get(play, ["coordinates", "y"])
+        last_period = safe_get(play, ["about", "period"])
+        last_period_time = safe_get(play, ["about", "periodTime"])
 
     return plays
 
 
-def clean_json(input_dir, output_dir=''):
+def clean_json(input_dir, output_dir=""):
     """
     Get clean data from raw NHL stats API
     :param input_dir: json file to clean data from, raw data
@@ -137,8 +138,8 @@ def clean_json(input_dir, output_dir=''):
     """
     if os.path.exists(output_dir):
         return pd.read_csv(output_dir)
-    if output_dir == '':
-        output_dir = input_dir.replace('json', 'csv')
+    if output_dir == "":
+        output_dir = input_dir.replace("json", "csv")
 
     df = pd.read_json(input_dir)
     tqdm.pandas()
@@ -155,8 +156,8 @@ def clean_json(input_dir, output_dir=''):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Reference: https://stackoverflow.com/questions/4480075/argparse-optional-positional-arguments
-    parser.add_argument('infile', type=str)
-    parser.add_argument('outfile', type=str, nargs='?', default='')
+    parser.add_argument("infile", type=str)
+    parser.add_argument("outfile", type=str, nargs="?", default="")
     args = parser.parse_args()
 
     clean_json(args.infile, args.outfile)
