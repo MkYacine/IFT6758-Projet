@@ -94,7 +94,7 @@ def plot_cumulative_percent_goal(y_val: np.ndarray, y_pred_proba: np.ndarray):
     for i in range(len(percentiles)):
         percentile_i = percentile_but[i]
 
-        indices = np.where(proba_but <= percentile_i)
+        indices = np.where(proba_but >= percentile_i)
 
         goals_in_percentile = np.sum(y_val[indices])
 
@@ -102,7 +102,7 @@ def plot_cumulative_percent_goal(y_val: np.ndarray, y_pred_proba: np.ndarray):
 
         proportions_buts.append((goals_in_percentile / total_shots_percentile) * 100)
 
-    plt.plot(np.linspace(100, 0, 10), proportions_buts)
+    plt.plot(np.linspace(0, 100, 10), proportions_buts)
     plt.ylim(0, 110)
     plt.xlim(110, -10)
     plt.xlabel("Shot Probability model percentile")
@@ -279,7 +279,7 @@ def plot_all_cumulative_percent_goal(
         for i in range(len(percentiles)):
             percentile_i = percentile_but[i]
 
-            indices = np.where(proba_but <= percentile_i)
+            indices = np.where(proba_but >= percentile_i)
 
             goals_in_percentile = np.sum(y_val[indices])
 
@@ -289,7 +289,7 @@ def plot_all_cumulative_percent_goal(
                 (goals_in_percentile / total_shots_percentile) * 100
             )
 
-        plt.plot(np.linspace(100, 0, 10), proportions_buts, label=f"{model}")
+        plt.plot(np.linspace(0, 100, 10), proportions_buts, label=f"{model}")
     plt.ylim(0, 110)
     plt.xlim(110, -10)
     plt.xlabel("Shot Probability model percentile")
