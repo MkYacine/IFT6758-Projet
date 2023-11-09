@@ -26,9 +26,9 @@ def compute_shot_angle(coordinate_x : float, coordinate_y : float):
     
         x_dist_abs = np.abs(coordinate_x - x_net)
         if coordinate_x > 89. : # Shot behind the net
-            return 90 + np.rad2deg(np.arctan(np.abs(coordinate_y)/x_dist_abs))
+            return 90 + np.rad2deg(np.arctan(coordinate_y/x_dist_abs))
         
-        return np.rad2deg(np.arctan(np.abs(coordinate_y)/x_dist_abs))
+        return np.rad2deg(np.arctan(coordinate_y/x_dist_abs))
     
     else: # If the shot is made on the left side
         x_net = -89.
@@ -37,9 +37,9 @@ def compute_shot_angle(coordinate_x : float, coordinate_y : float):
         
         x_dist_abs = np.abs(coordinate_x - x_net)
         if coordinate_x < -89. : # Shot behind the net
-            return 90 + np.rad2deg(np.arctan(np.abs(coordinate_y)/x_dist_abs))
+            return 90 + np.rad2deg(np.arctan(coordinate_y/x_dist_abs))
         
-        return np.rad2deg(np.arctan(np.abs(coordinate_y)/x_dist_abs))
+        return np.rad2deg(np.arctan(coordinate_y/x_dist_abs))
     
 
 def add_new_features(df : pd.DataFrame):
