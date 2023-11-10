@@ -31,6 +31,8 @@ def plot_roc_curve(y_val: np.ndarray, y_pred_proba: np.ndarray):
     plt.grid()
     plt.legend(loc=4)
 
+    fig = plt.gcf()
+
 
 def plot_goal_rate(y_val: np.ndarray, y_pred_proba: np.ndarray):
     """
@@ -71,6 +73,8 @@ def plot_goal_rate(y_val: np.ndarray, y_pred_proba: np.ndarray):
     plt.title("Goal Rate")
     plt.grid()
 
+    fig = plt.gcf()
+
 
 def plot_cumulative_percent_goal(y_val: np.ndarray, y_pred_proba: np.ndarray):
     """
@@ -110,6 +114,8 @@ def plot_cumulative_percent_goal(y_val: np.ndarray, y_pred_proba: np.ndarray):
     plt.title("Cumulative % of goals")
     plt.grid()
 
+    fig = plt.gcf()
+
 
 def plot_fiability_diagram(y_val: np.ndarray, y_pred_proba: np.ndarray):
     """
@@ -129,6 +135,8 @@ def plot_fiability_diagram(y_val: np.ndarray, y_pred_proba: np.ndarray):
     ax.set_title("Diagramme de fiabilité")
 
     CalibrationDisplay.from_predictions(y_val, proba_but, ax=ax)
+
+    fig = plt.gcf()
 
 
 def plot_metrics(y_val: np.ndarray, y_pred_proba: np.ndarray):
@@ -324,3 +332,25 @@ def plot_all_fiability_diagram(list_y_val: list, list_y_pred_proba: list, models
         CalibrationDisplay.from_predictions(y_val, proba_but, ax=ax, name=f"{model}")
 
     plt.legend(loc=2)
+
+
+def plot_fiability_diagram_resize(y_val: np.ndarray, y_pred_proba: np.ndarray):
+    """
+    Fonction qui plot le diagramme de fiabilité du modèle
+
+    Paramètres:
+    y_val (np.ndarray): les vrais labels sur l'ensemble de validation,
+    y_pred_proba (np.ndarray): les probabilités de but sur les données de l'ensemble de validation
+
+    Retour:
+    Fonction qui plot le diagramme de fiabilité du modèle
+    """
+
+    proba_but = y_pred_proba
+
+    ax = plt.subplot(1, 1, 1)
+    ax.set_title("Diagramme de fiabilité")
+
+    CalibrationDisplay.from_predictions(y_val, proba_but, ax=ax)
+
+    fig = plt.gcf()
