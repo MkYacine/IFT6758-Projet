@@ -166,3 +166,5 @@ data/__pycache__
 data/datasets/*
 
 data/html/*
+
+data/models/*
