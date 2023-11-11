@@ -169,3 +169,5 @@ data/html/*
 
 # Ignore .env files
 .env
+
+data/models/*
