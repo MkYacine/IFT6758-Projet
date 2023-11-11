@@ -97,6 +97,7 @@ def clean_row(row):
                 'gameID': safe_get(row, ['gamePk']),
                 'attacking_team_id': safe_get(play, ['team', 'id']),
                 'attacking_team_name': safe_get(play, ['team', 'name']),
+                'home_team':safe_get(boxscore, ['teams', 'home', 'name']),
                 'play_type': safe_get(play, ['result', 'event']),
                 # Reference https://www.w3schools.com/python/ref_func_next.asp
                 'shooter': next((player['player']['fullName'] for player in play.get('players', [])
