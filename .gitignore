@@ -166,3 +166,6 @@ data/__pycache__
 data/datasets/*
 
 data/html/*
+
+# Ignore .env files
+.env
