@@ -1,37 +1,34 @@
 from src.experiments.utils import *
 from src.features.feature_engineering_2 import select_features
 from sklearn.model_selection import train_test_split
-import xgboost as xgb
+from sklearn.linear_model import LogisticRegression
 
 
 def main():
-    data = pd.read_csv("data/datasets/csv_files/2016-2019-v2.csv")
-    X, y = select_features(data)
+    data = pd.read_csv("../../data/datasets/csv_files/2016-2019-v2.csv")
+    df1 = data[["distance_to_net", "shot_angle", "is_goal"]]
+    df1 = df1.dropna()
+
+    X, y = df1[["distance_to_net", "shot_angle"]].values, df1["is_goal"].values
+
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
 
-    model = xgb.XGBClassifier(
-        subsample=0.8,
-        n_estimators=500,
-        min_child_weight=2,
-        max_depth=6,
-        learning_rate=0.05,
-        colsample_bytree=1,
-    )
+    model = LogisticRegression()
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_val)
     y_pred_proba = model.predict_proba(X_val)[:, 1]
 
-    exp = create_experiment("xgb_hypertuned")
+    exp = create_experiment("logit_dist_angle")
     log_metrics(exp, y_val, y_pred, y_pred_proba)
-    log_plots(exp, y_val.values, y_pred_proba)
+    log_plots(exp, y_val, y_pred_proba)
     log_model(
         exp,
         model,
-        "xgb_hypertuned",
-        ["XGBoost", "Model hypertuned on accuracy", "Features: Q4 set"],
+        "logit_dist_angle",
+        ["LogisticRegression", "Features: distance_to_net, shot_angle"],
     )
     exp.end()
 

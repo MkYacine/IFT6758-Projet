@@ -9,17 +9,20 @@ from src.features.q3_plots import *
 def init():
     load_dotenv()
     try:
-        if not os.path.exists("..\data\models"):
+        if not os.path.exists("..\..\data\models"):
             os.mkdir("..\data\models")
     except OSError:
         print("Erreur lors de la création du répertoire")
 
 
 def create_experiment(name: str):
+    init()
+
     experiment = Experiment(
-        api_key=os.environ.get('COMET_API_KEY'),
+        api_key=os.environ.get("COMET_API_KEY"),
         project_name="ift6758-project",
-        workspace="tedoul")
+        workspace="tedoul",
+    )
 
     experiment.set_name(name)
 
@@ -27,15 +30,23 @@ def create_experiment(name: str):
 
 
 def log_plots(experiment: Experiment, y_val, y_pred_proba):
-    experiment.log_figure(figure=plot_roc_curve(y_val, y_pred_proba), figure_name="Courbe ROC")
+    experiment.log_figure(
+        figure=plot_roc_curve(y_val, y_pred_proba), figure_name="Courbe ROC"
+    )
     plt.close()
-    experiment.log_figure(figure=plot_goal_rate(y_val, y_pred_proba), figure_name="Goal rate")
+    experiment.log_figure(
+        figure=plot_goal_rate(y_val, y_pred_proba), figure_name="Goal rate"
+    )
     plt.close()
-    experiment.log_figure(figure=plot_cumulative_percent_goal(y_val, y_pred_proba),
-                          figure_name="Cumulative percent of goal")
+    experiment.log_figure(
+        figure=plot_cumulative_percent_goal(y_val, y_pred_proba),
+        figure_name="Cumulative percent of goal",
+    )
     plt.close()
-    experiment.log_figure(figure=plot_fiability_diagram(y_val, y_pred_proba),
-                          figure_name="Diagrame de fiabilité")
+    experiment.log_figure(
+        figure=plot_fiability_diagram_resize(y_val, y_pred_proba),
+        figure_name="Diagrame de fiabilité",
+    )
     plt.close()
 
 
@@ -46,12 +57,14 @@ def log_metrics(experiment: Experiment, y_val, y_pred, y_pred_proba):
     auc = roc_auc_score(y_val, y_pred_proba)
 
     experiment.log_metrics(
-        {"accuracy": accuracy, "recall": recall, "f1-score": f1, "auc": auc})
+        {"accuracy": accuracy, "recall": recall, "f1-score": f1, "auc": auc}
+    )
     experiment.log_confusion_matrix(y_val, y_pred)
 
 
 def log_model(experiment: Experiment, model, name, tags: list):
-    joblib.dump(model, f'data/models/{name}.joblib')
-    experiment.log_model(name="xgb_model_base",
-                         file_or_folder=f'data/models/{name}.joblib')
+    joblib.dump(model, f"../../data/models/{name}.joblib")
+    experiment.log_model(
+        name=f"{name}", file_or_folder=f"../../data/models/{name}.joblib"
+    )
     experiment.add_tags(tags)
