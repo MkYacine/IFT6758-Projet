@@ -54,7 +54,8 @@ def clean_row(row):
     for play in all_plays_list:
         play_time = get_game_seconds(safe_get(play, ['about', 'period']), safe_get(play, ['about', 'periodTime']))
 
-        # Remove expired penalties from the list
+        # For each penalty, we check if the end time of the penalty is less than or equal to the current time; 
+        # this would mean that the penalty has expired, so we remove it from the list. 
         for i in range(len(penalties) - 1, -1, -1):  # Iterate in reverse order, to avoid index problems when using pop()
             if penalties[i]['end'] <= play_time:
                 if penalties[i]['team'] == home_team:
@@ -64,14 +65,15 @@ def clean_row(row):
                 penalties.pop(i)
 
 
-        # Update powerplay timer
+        # Update powerplay timer 
         if home_players != away_players:
             powerplay_duration += play_time - get_game_seconds(last_period, last_period_time)
         else:
             powerplay = 0
 
 
-        # Check if event is penalty
+        # Check if event is penalty : When the event is a penalty, we add the penalty to the list and decrement the number
+        # of non-goalkeeper players on the penalized team by 1. 
         if play['result']['event'] == 'Penalty':
             penalty =  {'end': play_time+ 60*play['result']['penaltyMinutes'],
                        'team': play['team']['name']}
@@ -120,7 +122,7 @@ def clean_row(row):
             }
             plays.append(play_data)
 
-        # Update last event details
+        # Update last event details to use in next iteration
         last_event_type = safe_get(play, ["result", "event"])
         last_x = safe_get(play, ["coordinates", "x"])
         last_y = safe_get(play, ["coordinates", "y"])
