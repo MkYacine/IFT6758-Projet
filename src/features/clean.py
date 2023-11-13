@@ -69,7 +69,7 @@ def clean_row(row):
         if home_players != away_players:
             powerplay_duration += play_time - get_game_seconds(last_period, last_period_time)
         else:
-            powerplay = 0
+            powerplay_duration = 0
 
 
         # Check if event is penalty : When the event is a penalty, we add the penalty to the list and decrement the number
