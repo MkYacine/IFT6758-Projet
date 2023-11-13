@@ -5,33 +5,33 @@ import xgboost as xgb
 
 
 def main():
-    data = pd.read_csv("data/datasets/csv_files/2016-2019-v2.csv")
-    X, y = select_features(data)
+    data = pd.read_csv("data/datasets/csv_files/KBest_2016-2019.csv")
+    X, y = data.drop(['is_goal'], axis=1), data['is_goal']
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
 
     model = xgb.XGBClassifier(
-        subsample=0.8,
-        n_estimators=500,
-        min_child_weight=2,
-        max_depth=6,
-        learning_rate=0.05,
-        colsample_bytree=1,
+        subsample=0.6,
+        n_estimators=200,
+        min_child_weight=5,
+        max_depth=15,
+        learning_rate=0.2,
+        colsample_bytree=0.5,
     )
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_val)
     y_pred_proba = model.predict_proba(X_val)[:, 1]
 
-    exp = create_experiment("xgb_hypertuned_acc")
+    exp = create_experiment("xgb_hypertuned_KBest")
     log_metrics(exp, y_val, y_pred, y_pred_proba)
     log_plots(exp, y_val.values, y_pred_proba)
     log_model(
         exp,
         model,
-        "xgb_hypertuned",
-        ["XGBoost", "Model hypertuned on accuracy", "Features: Q4 set"],
+        "xgb_hypertuned_KBest",
+        ["XGBoost", "Model hypertuned on F1 score", "Features: KBest 10 features"],
     )
     exp.end()
 
