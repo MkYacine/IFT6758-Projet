@@ -12,26 +12,26 @@ def main():
     )
 
     model = xgb.XGBClassifier(
-        subsample=0.8,
-        n_estimators=500,
-        min_child_weight=2,
-        max_depth=6,
-        learning_rate=0.05,
-        colsample_bytree=1,
+        subsample=0.6,
+        n_estimators=200,
+        min_child_weight=5,
+        max_depth=15,
+        learning_rate=0.2,
+        colsample_bytree=0.5,
     )
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_val)
     y_pred_proba = model.predict_proba(X_val)[:, 1]
 
-    exp = create_experiment("xgb_hypertuned_acc")
+    exp = create_experiment("xgb_hypertuned_f1")
     log_metrics(exp, y_val, y_pred, y_pred_proba)
     log_plots(exp, y_val.values, y_pred_proba)
     log_model(
         exp,
         model,
         "xgb_hypertuned",
-        ["XGBoost", "Model hypertuned on accuracy", "Features: Q4 set"],
+        ["XGBoost", "Model hypertuned on F1 score", "Features: Q4 set"],
     )
     exp.end()
 
