@@ -34,21 +34,26 @@ def encode_categorical_features(df : pd.DataFrame, categorical_features: list, s
 
     return df
 
-def select_features(data: pd.DataFrame):
+def select_features(data: pd.DataFrame, dropna=False):
     df = data[['period', 'game_seconds', 'x_coordinate', 'y_coordinate', 'distance_to_net', 'shot_angle', 'shot_type', 'last_event_type', 'last_event_x', 'last_event_y', 'time_since_last_event', 'distance_from_last_event', 'rebound', 'angle_change', 'speed', 'powerplay_duration', 'home_team_players', 'away_team_players', 'is_goal']]
+    if dropna:
+        df = df.dropna().reset_index(drop=True)
     X, y = df.drop(['is_goal'], axis=1), df['is_goal']
 
 
     # One hot encoding last_event_type
-    encoder = OneHotEncoder(sparse=False, drop='if_binary')
+    
+    # All labels found in the training set
+    category_labels = ['Blocked Shot', 'Faceoff', 'Game Official', 'Giveaway', 'Goal', 'Hit', 'Missed Shot', 'Official Challenge', 'Penalty', 'Period End', 'Period Ready', 'Period Start', 'Shootout Complete', 'Shot', 'Stoppage', 'Takeaway']
+    encoder = OneHotEncoder(categories=[category_labels], sparse=False, handle_unknown='ignore')
     categorical_columns = ['last_event_type']
     data_encoded = encoder.fit_transform(X[categorical_columns])
     data_encoded = pd.DataFrame(data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
-    
+
+
     # Drop original categorical columns and concatenate encoded columns
     X = X.drop(columns=categorical_columns)
     X = pd.concat([X, data_encoded], axis=1)
-
     # Transforming rebound to int
     X['rebound'] = X['rebound'].astype(int)
 
