@@ -9,8 +9,8 @@ from src.features.q3_plots import *
 def init():
     load_dotenv()
     try:
-        if not os.path.exists("..\..\data\models"):
-            os.mkdir("..\data\models")
+        if not os.path.exists("data\models"):
+            os.mkdir("data\models")
     except OSError:
         print("Erreur lors de la création du répertoire")
 
@@ -63,8 +63,6 @@ def log_metrics(experiment: Experiment, y_val, y_pred, y_pred_proba):
 
 
 def log_model(experiment: Experiment, model, name, tags: list):
-    joblib.dump(model, f"../../data/models/{name}.joblib")
-    experiment.log_model(
-        name=f"{name}", file_or_folder=f"../../data/models/{name}.joblib"
-    )
+    joblib.dump(model, f"data/models/{name}.joblib")
+    experiment.log_model(name=f"{name}", file_or_folder=f"data/models/{name}.joblib")
     experiment.add_tags(tags)
