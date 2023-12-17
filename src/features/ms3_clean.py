@@ -59,7 +59,7 @@ def clean_row(row):
             play_data = {
                 'gameID' : row['id'],
                 'period' : safe_get(play, ['period']),
-                'period_type' : row['periodDescriptor']['periodType'],
+                'period_type' : safe_get(play, ['periodDescriptor','periodType']),
                 'period_time' : safe_get(play, ['timeInPeriod']),
                 'home_team_name' : home_team_name,
                 'home_team_id' : home_team_id,
