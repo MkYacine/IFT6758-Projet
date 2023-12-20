@@ -1,13 +1,3 @@
-"""
-If you are in the same directory as this file (app.py), you can run run the app using gunicorn:
-
-    $ gunicorn --bind 0.0.0.0:<PORT> app:app
-
-gunicorn can be installed via:
-
-    $ pip install gunicorn
-
-"""
 import os
 from logging.handlers import RotatingFileHandler
 import logging
@@ -15,7 +5,6 @@ from flask import Flask, jsonify, request, abort
 import pandas as pd
 import joblib
 from comet_ml import API
-from dotenv import load_dotenv
 
 app = Flask(__name__)
 
@@ -36,7 +25,6 @@ MODEL_DIR = os.path.join(parent_dir, 'data', 'models')
 loaded_model = None
 
 # Setup Comet
-load_dotenv()
 api = API()
 
 
