@@ -71,7 +71,6 @@ def download_registry_model():
     """
     global loaded_model
 
-    # Get POST json data
     json = request.get_json()
     app.logger.info(json)
 
@@ -81,7 +80,7 @@ def download_registry_model():
 
     model_path = MODEL_DIR+'\\'+model_name+'.joblib'
 
-    if os.path.exists(model_path):  # replace with actual check
+    if os.path.exists(model_path):
         app.logger.info("Model already downloaded.")
         loaded_model = joblib.load(model_path) # load model from joblib file
         return jsonify({"status": "Model already downloaded."})
@@ -109,18 +108,14 @@ def predict():
     """
     if not loaded_model:
         abort(503, description="Model not loaded.")
-    # Get POST json data
+
     data = request.get_json()
     app.logger.info(data)
     try:
-        # Convert data to appropriate format for the model
-        # For example, if your model expects a pandas DataFrame:
         if 'columns' in data and 'data' in data:
-            # Create DataFrame from JSON
             df = pd.DataFrame(data['data'], columns=data['columns']).values
         else:
             return jsonify({"error": "Invalid data format"}), 400
-        # Perform prediction
         prediction = loaded_model.predict(df)
 
         return jsonify({"prediction": prediction.tolist()})
