@@ -1,0 +1,20 @@
+FROM python:3.9-slim
+
+WORKDIR /code
+
+# Copy the requirements file and install dependencies
+COPY requirements-streamlit.txt /code/
+RUN pip install --no-cache-dir -r requirements-streamlit.txt
+
+# Copy packages
+COPY setup.py /code/
+COPY src/client /code/src/client
+COPY src/features /code/src/features
+COPY src/visualization /code/src/visualization
+COPY src/streamlit /code/src/streamlit
+
+# Install project package
+RUN pip install -e .
+
+# run Streamlit app
+CMD ["streamlit", "run", "src/streamlit/streamlit_app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
