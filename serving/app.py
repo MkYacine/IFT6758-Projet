@@ -23,7 +23,7 @@ logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
 current_script_path = os.path.abspath(__file__)
 current_dir = os.path.dirname(current_script_path)
 parent_dir = os.path.dirname(current_dir)
-MODEL_DIR = os.path.join(parent_dir, "data", "models")
+MODEL_DIR = os.path.join(parent_dir, "models")
 loaded_model = None
 
 # Setup Comet
@@ -67,7 +67,7 @@ def download_registry_model():
     workspace = json["workspace"]
     version = json["version"]
 
-    model_path = MODEL_DIR + "\\" + model_name + ".joblib"
+    model_path = MODEL_DIR + "/" + model_name + ".joblib"
 
     if os.path.exists(model_path):
         app.logger.info(f"Model already downloaded")
@@ -85,7 +85,6 @@ def download_registry_model():
         loaded_model = joblib.load(model_path)
 
         app.logger.info("Model downloaded and loaded successfully.")
-        print("Model downloaded and loaded successfully.")
         return jsonify({"status": "Model downloaded and loaded successfully."})
     except Exception as e:
         app.logger.error(f"Failed to download model: {e}")
@@ -103,7 +102,6 @@ def predict():
         abort(503, description="Model not loaded.")
 
     data = request.get_json()
-    print(data)
     app.logger.info(data)
     try:
         if "columns" in data and "data" in data:

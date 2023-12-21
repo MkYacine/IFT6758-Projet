@@ -1,15 +1,12 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 from PIL import Image
-import requests
-from serving.gameclient import *
 from src.features.ms3_clean import print_data
-from serving.client import *
 from datetime import datetime
+from src.client.client import *
+from src.client.gameclient import *
 
-gc = GameClient()
-sclient = ServingClient(ip="127.0.0.1")
+gc = GameClient(ip="serving")
+sclient = ServingClient(ip="serving")
 
 # Displaying the NHL Logo
 col1, col2, col3 = st.columns(3)
@@ -18,7 +15,7 @@ with col1:
     st.write(" ")
 
 with col2:
-    img = Image.open("Nhl_logo.png")
+    img = Image.open("src/streamlit/Nhl_logo.png")
     img = img.resize((img.width // 6, img.height // 6))
     st.image(img)
 
@@ -33,7 +30,6 @@ st.markdown(
 
 
 with st.sidebar:
-    # TODO: Add input for the sidebar
     st.sidebar.title("Model selection")
 
     workspace = st.text_input("Workspace", "A11-Group")
@@ -61,14 +57,12 @@ with st.sidebar:
             unsafe_allow_html=True,
         )
 
-    # TODO: Add Game ID input
 user_input = st.text_input("GameID")
 
 button = st.button("Ping game")
 
 
 if button:
-    # TODO: Add Game info and predictions
     gd = gc.fetch_live_game_data(user_input)
 
     if gd == "vide":
